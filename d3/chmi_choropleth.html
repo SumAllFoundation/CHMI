@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		 <header>
+    	<h1>Twitter Drug Abuse Keyword Detection</h1>
+	    </header>
+	    <div id="main" role="main">
+	      <div class="btn-group" data-toggle="buttons-radio">
+	      	<button type="button" id="ba" class="btn switch">Barbiturates</button>
+	      	<button type="button" id="be" class="btn switch">Benzodiazepines</button>
+	        <button type="button" id="op" class="btn active switch">Opiates</button>
+	        <button type="button" id="sl" class="btn active switch">Sleep Medications</button>
+	        <button type="button" id="st" class="btn switch">Stimulants</button>
+	      </div>
+	      <div id="vis"></div>
+	    </div>
+		<meta charset="utf-8">
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+		<style type="text/css">
+			/* No style rules here yet */		
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+			//Width and height
+			var w = 1000;
+			var h = 600;
+
+
+			//SumAll Default Color Sheme
+			var sumall_color_schema = ["#114370", "#178BE2", "#5FBEF2", "#9FD8F7"]
+
+			//Define map projection
+			var projection = d3.geo.albersUsa()
+								   .translate([w/2, h/2])
+								   .scale([1000]);
+
+			//Define path generator
+			var path = d3.geo.path()
+							 .projection(projection);
+							 
+			//Define quantize scale to sort data values into buckets of color
+			var color = d3.scale.quantize()
+								.range(sumall_color_schema);
+								//Colors taken from colorbrewer.js, included in the D3 download
+
+			//Create SVG element
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+
+			//Varibles
+			var jsonData =[]
+
+			//Load in agriculture data
+			d3.csv("/data/chmi_choropleth_data.csv", function(data) {
+
+
+				//Default column is named value1
+
+				//Set input domain for color scale
+				color.domain([
+					d3.min(data, function(d) { return d['sleepmedications']; }), 
+					d3.max(data, function(d) { return d['sleepmedications']; })
+				]);
+
+
+
+				//console.log(data)
+
+				//Load in GeoJSON data
+				d3.json("/data/us-states.json", function(json) {
+
+					jsonData = json
+
+
+					//Merge the ag. data and GeoJSON
+					//Loop through once for each ag. data value
+					
+					for (var i = 0; i < data.length; i++) {
+						
+						//Grab state name
+						var dataState = data[i].state;
+						
+						//Grab data value, and convert from string to float
+						var dataValue = parseFloat(data[i]['sleepmedications']);
+						//console.log(data[i].value1)
+				
+						//Find the corresponding state inside the GeoJSON
+						for (var j = 0; j < jsonData.features.length; j++) {
+						
+							var jsonState = jsonData.features[j].properties.name;
+				
+							if (dataState == jsonState) {
+						
+								//Copy the data value into the JSON
+								jsonData.features[j].properties.value = dataValue;
+								
+								//Stop looking through the JSON
+								break;
+								
+							}
+						}		
+					}
+					console.log(jsonData.features)
+					//Bind data and create one path per GeoJSON feature
+					svg.selectAll("path")
+					   .data(jsonData.features)
+					   .enter()
+					   .append("path")
+					   .attr("d", path)
+					   .style("fill", function(d) {
+					   		//Get data value
+					   		var value = d.properties.value;		
+					   		if (value) {
+					   			//If value exists…
+						   		return color(value);
+					   		} else {
+					   			//If value is undefined…
+						   		return "#ccc";
+					   		}
+					   });
+
+				svg.append("text")
+					.attr("x", (w / 2))             
+					.attr("y", 0  + (50))
+					.attr("text-anchor", "middle")  
+					.style("font-size", "16px")  
+					.text("sleepmedications");
+
+
+	
+
+				//Interactivity
+				d3.selectAll("button").
+        			on("click", function(){
+        				var ID = d3.select(this).attr("id");
+        					if (ID == "ba"){
+
+        						transitionChart(data,jsonData,'barbiturates')
+								
+
+        					} else if (ID =='be'){
+
+        						transitionChart(data,jsonData,'benzodiazepines')
+
+
+        					} else if (ID =='op'){
+
+        						transitionChart(data,jsonData,'opiates')
+
+        					} else if (ID == 'sl'){
+
+        						transitionChart(data,jsonData,'sleepmedications')
+
+
+        					} else if (ID == 'st'){
+
+        						transitionChart(data,jsonData,'stimulants')
+
+        					}
+        			});
+			
+			});
+
+
+				function transitionChart(data,jsonData,column){
+					//Color Palette
+					color.domain([
+						d3.min(data, function(d) { return d[column]; }), 
+						d3.max(data, function(d) { return d[column]; })
+					]);
+						//Recreate JSON values
+						for (var i = 0; i < data.length; i++) {
+
+							//Grab state name
+							var dataState = data[i].state;
+
+							//Grab data value, and convert from string to float
+							var dataValue = parseFloat(data[i][column]);
+
+							//Find the corresponding state inside the GeoJSON
+							for (var j = 0; j < jsonData.features.length; j++) {
+
+								var jsonState = jsonData.features[j].properties.name;
+
+								if (dataState == jsonState) {
+
+								//Copy the data value into the JSON
+								jsonData.features[j].properties.value = dataValue;
+
+									//Stop looking through the JSON
+									break;
+						
+								}
+							}		
+						}
+						console.log(jsonData.features)
+						//Transition
+						svg.selectAll('path')
+							.data(jsonData.features)
+							.transition()
+							.duration(1000)
+					   		.style("fill", function(d) {
+							   		//Get data value
+							   		var value = d.properties.value;		
+							   		if (value) {
+							   			//If value exists…
+								   		return color(value);
+							   		} else {
+							   			//If value is undefined…
+								   		return "#ccc";
+							   		}
+							})
+
+
+				svg.select("text")
+					.transition()
+					.duration()
+					.text(column);
+					};
+
+		   });
+			
+		</script>
+	    	<footer>
+    		<p>By Deniz Zorlu. Inspired by <a href="http://bl.ocks.org/mbostock/4060606/"> Mike Bostock's example </a></p>
+    		<p>Data source is <a href="http://twitter.com">Twitter</a>.</p>
+    		<p>Locations were based on the geolocation of the tweets, if available. Otherwise, the geolocation of the user is used. </p>
+    		</footer>
+	</body>
+</html>
