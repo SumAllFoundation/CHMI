@@ -15,7 +15,7 @@ Here is a brief description of the methodology  we used. Twitter data is availab
 
 1)	Collect keyword-related Tweet data. 
 
-	Use the Tweepy library to retrieve and store tweets in MongoDB. 
+Use the Tweepy library to retrieve and store tweets in MongoDB. 
 
 	https://github.com/dzorlu/utilities
 
@@ -27,9 +27,9 @@ Here is a brief description of the methodology  we used. Twitter data is availab
 
 	https://github.com/SumAllFoundation/CHMI/tree/master/mr
 
-	Only 1 percent of the tweets approximately has location information. To enrich the sparse dataset we also use the user location information if available. 
+Only 1 percent of the tweets approximately has location information. To enrich the sparse dataset we also use the user location information if available. 
 
-	More information on MrJOB module can be found here:
+More information on MrJOB module can be found here:
 
 	https://pythonhosted.org/mrjob/
 
@@ -39,6 +39,6 @@ Here is a brief description of the methodology  we used. Twitter data is availab
 
 5)	The code to create the visualization can be found here:
 
-		https://github.com/SumAllFoundation/CHMI/tree/master/d3 
+	https://github.com/SumAllFoundation/CHMI/tree/master/d3 
 
 
