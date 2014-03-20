@@ -53,7 +53,7 @@ def chmi_utility():
 	category_totals_by_county = category_totals_by_county[category_totals_by_county.sum(axis=1) > 30 ]
 	merged = category_totals_by_county.join(pop)
 	merged = merged.apply(lambda x: x.fillna(x.mean()),axis=0)
-	merged = merged.div(merged.population, axis='index') * 1000
+	merged = merged.div(merged.population, axis='index') * 1000000
 	category_totals_normalized = merged.drop('population',axis=1)
 	category_totals_normalized.to_csv('data/chmi_county_data.csv')
 	print 'D3 output saved to file'
