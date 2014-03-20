@@ -35,11 +35,11 @@ More information on MrJOB module can be found here:
 
 4)	Format the data and normalize by county population for visualization.
 
-	We only take the counties that have more than 30 tweets in total to avoid large varitions within small sample sets. A good and relevant discussion can be found here:
+We only take the counties that have more than 30 tweets in total to avoid large varitions within small sample sets. We then normalize by county population. A good and relevant discussion can be found here:
 
 	http://press.princeton.edu/chapters/s8863.pdf 
 
-	Please refer to the code. 
+Please refer to the code for the method.
 
 	https://github.com/SumAllFoundation/CHMI/blob/master/chmi_utility.py
 
