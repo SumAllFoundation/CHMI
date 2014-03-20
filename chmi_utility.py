@@ -49,14 +49,12 @@ def chmi_utility():
 	pop = pd.read_csv('/data/county_population.csv')
 	pop.index = pop['county']
 	pop = pop.drop('county',axis=1)
+	#Anything > 30 is included to avoid small set bias problem. 
+	category_totals_by_county = category_totals_by_county[category_totals_by_county.sum(axis=1) > 30 ]
 	merged = category_totals_by_county.join(pop)
-	#Fill population NA's with means
 	merged = merged.apply(lambda x: x.fillna(x.mean()),axis=0)
-	#Normalize
 	merged = merged.div(merged.population, axis='index') * 1000
 	category_totals_normalized = merged.drop('population',axis=1)
-	#Format + Save to File
-	pd.options.display.float_format = '{:20,.2f}'.format
 	category_totals_normalized.to_csv('data/chmi_county_data.csv')
 	print 'D3 output saved to file'
 
