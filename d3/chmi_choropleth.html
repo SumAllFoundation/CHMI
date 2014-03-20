@@ -91,7 +91,7 @@
 
 				//Set input domain for color scale
 				color.domain([
-					d3.min(data, function(d) { return d['sleepmedications']; }), 
+					d3.min(data, function(d) { return  d['sleepmedications']; }), 
 					d3.max(data, function(d) { return d['sleepmedications']; })
 				]);
 
@@ -162,7 +162,7 @@
 					    d3.select(this).transition().duration(300).style("opacity", 1);
 					    div.transition().duration(300)
 					    .style("opacity", 1)
-					    div.text("Number of tweets per 1000 people : " +  d.properties.value.toPrecision(4) + ' in county ' + d.id )
+					    div.text("Number of tweets per 1MM people : " +  d.properties.value.toPrecision(4) + ' in county ' + d.id )
 					    .style("left", (d3.event.pageX) + "px")
 					    .style("top", (d3.event.pageY -30) + "px");
 					  })
@@ -241,8 +241,8 @@
 				function transitionChart(data,jsonData,column){
 					//Color Palette
 					color.domain([
-						d3.min(data, function(d) { return d[column]; }), 
-						d3.max(data, function(d) { return d[column]; })
+						d3.min(data, function(d) { return  d[column]; }), 
+						d3.max(data, function(d) { return  d[column]; })
 					]);
 						//Recreate JSON values
 						for (var i = 0; i < data.length; i++) {
