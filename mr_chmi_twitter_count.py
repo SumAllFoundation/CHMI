@@ -9,11 +9,6 @@ from geopy.geocoders import OpenMapQuest as OMQ
 from geopy.geocoders import GoogleV3
 import csv
 
-#1 ) Dump 
-#   Tweets: mongoexport --db CHMI --collection tweets --file ~/Dropbox/code/CHMI/data/tweets.json --host ec2-184-73-72-229.compute-1.amazonaws.com
-#2 ) Run
-#   python ~/Dropbox/code/CHMI/mr_chmi_twitter_count.py ~/Dropbox/full_tweets.json  > ~/Dropbox/code/CHMI/data/output0407.json --file ~/Dropbox/code/CHMI/data/us-counties.json --file ~/Dropbox/code/CHMI/data/search_short.csv --file ~/Dropbox/code/utilities/dbparams.json -r emr
-
 
 class MongoKeywordCount(MRJob):
     #Job to count the number of tweets per keyword, date, location. 

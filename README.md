@@ -1,4 +1,4 @@
-Prescription Drug Abuse Repository
+Prescription Drug Abuse Dashboard Repository
 
 
 
@@ -19,13 +19,17 @@ Use the Tweepy library to retrieve and store tweets in MongoDB.
 
 	https://github.com/dzorlu/utilities
 
+	$ python tweepy_mongodb_update.py --dbparams 'dbparams.json' --inputlist 'twitter_keywords.json'
+
 2)	A data dump of all tweets to a local file.
 
-	$ mongoimport --db CHMI --collection tweets --file tweets.json --host ec2-xxx-xx-x-xxx.compute-1.amazonaws.com
+	$ mongoexport --db CHMI --collection tweets --file tweets.json --host ec2-xxx.compute-1.amazonaws.com
 
-3)	A MapReduce Job to aggregate tweet counts by desired geography - county in this case. 
+3)	A MapReduce Job to aggregate tweet counts by desired geography - county in this case. 'Search_short' is a subset of 'twitter_keywords.json' 
 
 	https://github.com/SumAllFoundation/CHMI/tree/master/mr
+
+	$ python mr_chmi_twitter_count.py tweets.json  > output.json --file us-counties.json --file search_short.csv --file dbparams.json -r emr
 
 Only 1 percent of the tweets approximately has location information. To enrich the sparse dataset we also use the user location information if available. 
 
@@ -45,6 +49,6 @@ Please refer to the code for the method.
 
 5)	The code to create the visualization can be found here:
 
-	https://github.com/SumAllFoundation/CHMI/tree/master/d3 
+	https://github.com/SumAllFoundation/CHMI/blob/master/d3/chmi_choropleth.html 
 
 
