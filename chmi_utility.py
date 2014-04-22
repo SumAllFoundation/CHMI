@@ -4,13 +4,18 @@ import pandas as pd
 'Taking the mr input json, performing some clean-up, and normalizing by county population based on Census 2010.\
 The output is used on D3 visualization'
 
-def chmi_utility():
+INPUT = 'mr_output.json'
+INPUT_COUNTY = 'county_population.csv'
+OUTPUT = 'output_normalized.json'
+
+
+def chmi_utility(input=INPUT,count=INPUT_COUNTY,output=OUTPUT):
 
 	###Map/Reduce Job
 	###Explanotry Analysis, Clean up and Merge the Data
 	#Load the MR Output
 	out=[]
-	with open('data/mr_output.json', 'r') as results_file:
+	with open(input, 'r') as results_file:
 		for line in results_file:
 		    try:
 		        line = line.split('\t')
@@ -45,18 +50,21 @@ def chmi_utility():
 	category_totals_by_county = keywords.groupby(['county','category']).sum().reset_index()
 	category_totals_by_county = category_totals_by_county.pivot(columns='category', index='county', values='count')
 	category_totals_by_county[pd.isnull(category_totals_by_county)]=0
+	#Index convert to int
+	ix = map((lambda x: int(x)), category_totals_by_county.index)
+	category_totals_by_county.index = ix
 	#Dictionary
-	pop = pd.read_csv('/data/county_population.csv')
+	pop = pd.read_csv(count)
 	pop.index = pop['county']
 	pop = pop.drop('county',axis=1)
-	#Anything > 30 is included to avoid small set bias problem. 
-	category_totals_by_county = category_totals_by_county[category_totals_by_county.sum(axis=1) > 30 ]
-	merged = category_totals_by_county.join(pop)
+	#Anything > 10 is included to avoid small set bias problem. 
+	category_totals_by_county_ab = category_totals_by_county[category_totals_by_county.sum(axis=1) > 60 ]
+	merged = category_totals_by_county_ab.join(pop)
 	merged = merged.apply(lambda x: x.fillna(x.mean()),axis=0)
-	merged = merged.div(merged.population, axis='index') * 1000000
+	merged = merged.div(merged.population, axis='index') * 10000
 	category_totals_normalized = merged.drop('population',axis=1)
-	category_totals_normalized.to_csv('data/chmi_county_data.csv')
-	print 'D3 output saved to file'
+	category_totals_normalized.to_csv(output)
+	print 'Normalized output saved to file'
 
 if __name__ == '__main__':
 	chmi_utility()
