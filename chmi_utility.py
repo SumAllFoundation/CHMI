@@ -6,7 +6,7 @@ The output is used on D3 visualization'
 
 INPUT = 'mr_output.json'
 INPUT_COUNTY = 'county_population.csv'
-OUTPUT = 'output_normalized.json'
+OUTPUT = 'output_normalized.csv'
 
 
 def chmi_utility(input=INPUT,count=INPUT_COUNTY,output=OUTPUT):
